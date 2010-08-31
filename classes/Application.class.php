@@ -6,7 +6,7 @@
 
 /**************************************************
  * @package application
- * @version 1.10 $Revision: 883 $
+ * @version 2.01 $Revision: 899 $
  **************************************************/
 
 /**************************************************
@@ -15,24 +15,39 @@
  **************************************************/
 
 /**************************************************
- * $Id: Application.class.php 883 2010-05-29 09:07:00Z webadmin $
+ * $Id: Application.class.php 899 2010-06-01 18:35:30Z webadmin $
  * $HeadURL: http://svn.rm-keil.de/rm-keil/webpages/matthias-keil.de/Release%20(1.0)/httpdocs/_app/Application.class.php $
- * $Date: 2010-05-29 11:07:00 +0200 (Sa, 29 Mai 2010) $
+ * $Date: 2010-06-01 20:35:30 +0200 (Di, 01 Jun 2010) $
  * $Author: webadmin $
- * $Revision: 883 $
+ * $Revision: 899 $
  **************************************************/
 
-Application::initialize($_SERVER["DOCUMENT_ROOT"].'/_app');
+Application::$classpath = $_SERVER['DOCUMENT_ROOT'].'/_app';
+Application::$cache = $_SERVER['DOCUMENT_ROOT'].'/_cache/packages.cache.php';
+
+Application::initialize();
 
 class Application {
 
+	public static $classpath = '';
+	public static $cache = '';
+
 	private static $include = array();
 
-	static function initialize($_root) {
-		// SESSION
-		Application::$include = Application::scan($_root);
+	static function initialize() {
+		if(file_exists(Application::$cache)) {
+			Application::$include = Application::read();
+		} else {
+			Application::$include = Application::scan(Application::$classpath);
+			Application::write(Application::$include);
+		}
 	}
 
+	/**
+	 * @param unknown_type $_path
+	 * @param unknown_type $_prefix
+	 * @return Ambigous <string, multitype:>
+	 */
 	private static function scan($_path, $_prefix = '') {
 		$delimiter = '/';
 		$separator = '.';
@@ -53,13 +68,16 @@ class Application {
 			}
 		}
 
-		$result[$_prefix.$wildcard] = $files;		
+		$result[$_prefix.$wildcard] = $files;
 		return $result;
 	}
 
+	/**
+	 * @param string $_include
+	 */
 	static function import($_include) {
 		if(!array_key_exists($_include, Application::$include)) {
-			throw new RuntimeException('undefinded package: '.$package);
+			throw new RuntimeException('undefinded package: '.$_include);
 		} else if(is_array(Application::$include[$_include])) {
 			foreach (Application::$include[$_include] as $file) {
 				require_once $file;
@@ -67,6 +85,20 @@ class Application {
 		} else {
 			require_once Application::$include[$_include];
 		}
+	}
+
+	/**
+	 * @return mixed
+	 */
+	static function read() {
+		return unserialize(file_get_contents(Application::$cache));
+	}
+
+	/**
+	 * @param array $_value
+	 */
+	static function write(array $_value) {
+		file_put_contents(Application::$cache, serialize($_value));
 	}
 }
 ?>
