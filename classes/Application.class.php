@@ -7,11 +7,11 @@
  *	Publisher: RRC-Bötzingen (rrc-boetzingen.de)
  *	Version 1.00
  
- *	$Id: Application.class.php 243 2009-11-25 20:34:04Z webadmin $
- *	$HeadURL: http://svn.rm-keil.de/rm-keil/projects/phpApplication/workspace/1.00/Application.class.php $
- *	$Date: 2009-11-25 21:34:04 +0100 (Mi, 25 Nov 2009) $
+ *	$Id: Application.class.php 798 2010-05-19 11:36:01Z webadmin $
+ *	$HeadURL: http://svn.rm-keil.de/rm-keil/projects/phpApplication/workspace/1.01/Application.class.php $
+ *	$Date: 2010-05-19 13:36:01 +0200 (Mi, 19 Mai 2010) $
  *	$Author: webadmin $
- *	$Revision: 243 $
+ *	$Revision: 798 $
 
  *	TODO:
  */
@@ -23,7 +23,7 @@ class Application {
 	private static $include = array();
 
 	static function initialize($_root) {
-		Application::$include = Application::scan($_root);
+		Application::$include = ayrray_merge(Application::$includem Application::scan($_root));
 	}
 
 	private static function scan($_path) {
