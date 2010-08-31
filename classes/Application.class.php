@@ -1,29 +1,29 @@
 <?php
-/**	Application
- *	php application file loader
 
- *	Author:	Roman Matthias Keil
- *	Copyright: Roman Matthias Keil
- *	Publisher: RRC-Bötzingen (rrc-boetzingen.de)
- *	Version 1.00
- 
- *	$Id: Application.class.php 798 2010-05-19 11:36:01Z webadmin $
- *	$HeadURL: http://svn.rm-keil.de/rm-keil/projects/phpApplication/workspace/1.01/Application.class.php $
- *	$Date: 2010-05-19 13:36:01 +0200 (Mi, 19 Mai 2010) $
- *	$Author: webadmin $
- *	$Revision: 798 $
+/**************************************************
+ * APPLICATION
+ * php application fileloader
+ **************************************************/
 
- *	TODO:
- */
+/**************************************************
+ * Author: Roman Matthias Keil
+ * Copyright: Roman Matthias Keil
+ * Publisher: rm-keil.de
+ **************************************************/
 
-Application::initialize($_SERVER["DOCUMENT_ROOT"]);
+/**************************************************
+ * $Date: 2010-05-19 13:45:33 +0200 (Mi, 19 Mai 2010) $
+ * $Revision: 800 $
+ **************************************************/
+
+Application::initialize($_SERVER["DOCUMENT_ROOT"].'/_app');
 
 class Application {
 
 	private static $include = array();
 
 	static function initialize($_root) {
-		Application::$include = ayrray_merge(Application::$includem Application::scan($_root));
+		Application::$include = Application::scan($_root);
 	}
 
 	private static function scan($_path) {
@@ -32,7 +32,7 @@ class Application {
 
 		$handle = opendir($_path);
 		while(false !== ($resource = readdir($handle))) {
-			if ($resource == "." || $resource == ".." || $resource == ".svn") continue;
+			if ($resource == "." || $resource == ".." || $resource == ".svn" || $resource == ".htaccess" || $resource == ".htpasswd") continue;
 
 			if(is_dir($_path.$delimiter.$resource)) {
 				$result[$resource] = Application::scan($_path.$delimiter.$resource);
@@ -46,6 +46,7 @@ class Application {
 	}
 
 	static function import($_include) {
+
 		$packages = explode('.', $_include);
 		$file = array_pop($packages);
 
@@ -55,13 +56,15 @@ class Application {
 			if(isset($includes[$package]))
 				$includes = $includes[$package];
 			else
-				throw new RuntimeException('undefindes package: '.$package);
+				throw new RuntimeException('undefinded package: '.$package);
 
-		if($file != '*')
-			require_once $includes[$file];
-		else
-			foreach($includes as $include)
-				require_once $include;
+		if($file != '*') {
+			if(is_file($includes[$file])) require_once $includes[$file];
+		}
+		else {
+			foreach($includes as $include) {
+				if(is_file($include)) require_once $include;}
+		}
 	}
 }
 ?>
