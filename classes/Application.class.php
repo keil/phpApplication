@@ -6,7 +6,7 @@
 
 /**************************************************
  * @package application
- * @version 1.10 $Revision: 803 $
+ * @version 1.10 $Revision: 883 $
  **************************************************/
 
 /**************************************************
@@ -15,11 +15,11 @@
  **************************************************/
 
 /**************************************************
- * $Id: Application.class.php 803 2010-05-20 13:47:08Z webadmin $
+ * $Id: Application.class.php 883 2010-05-29 09:07:00Z webadmin $
  * $HeadURL: http://svn.rm-keil.de/rm-keil/webpages/matthias-keil.de/Release%20(1.0)/httpdocs/_app/Application.class.php $
- * $Date: 2010-05-20 15:47:08 +0200 (Do, 20 Mai 2010) $
+ * $Date: 2010-05-29 11:07:00 +0200 (Sa, 29 Mai 2010) $
  * $Author: webadmin $
- * $Revision: 803 $
+ * $Revision: 883 $
  **************************************************/
 
 Application::initialize($_SERVER["DOCUMENT_ROOT"].'/_app');
@@ -29,6 +29,7 @@ class Application {
 	private static $include = array();
 
 	static function initialize($_root) {
+		// SESSION
 		Application::$include = Application::scan($_root);
 	}
 
@@ -39,8 +40,7 @@ class Application {
 		$result = array();
 		$files = array();
 
-		$handle = opendir($_path);
-		while(false !== ($resource = readdir($handle))) {
+		foreach(scandir($_path) as $resource) {
 			if ($resource == "." || $resource == ".." || $resource == ".svn" || $resource == ".htaccess" || $resource == ".htpasswd") {
 				continue;
 			} else if(is_dir($_path.$delimiter.$resource)) {
@@ -53,8 +53,7 @@ class Application {
 			}
 		}
 
-		$result[$_prefix.$wildcard] = $files;
-		closedir($handle);
+		$result[$_prefix.$wildcard] = $files;		
 		return $result;
 	}
 
