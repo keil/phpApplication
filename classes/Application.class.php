@@ -6,7 +6,8 @@
 
 /**************************************************
  * @package application
- * @version 2.01 $Revision: 899 $
+ * @version 2.01 $Revision: 617 $
+ * @build 924
  **************************************************/
 
 /**************************************************
@@ -14,16 +15,8 @@
  * @copyright: Roman Matthias Keil
  **************************************************/
 
-/**************************************************
- * $Id: Application.class.php 899 2010-06-01 18:35:30Z webadmin $
- * $HeadURL: http://svn.rm-keil.de/rm-keil/webpages/matthias-keil.de/Release%20(1.0)/httpdocs/_app/Application.class.php $
- * $Date: 2010-06-01 20:35:30 +0200 (Di, 01 Jun 2010) $
- * $Author: webadmin $
- * $Revision: 899 $
- **************************************************/
-
-Application::$classpath = $_SERVER['DOCUMENT_ROOT'].'/_app';
-Application::$cache = $_SERVER['DOCUMENT_ROOT'].'/_cache/packages.cache.php';
+Application::$classpath	= $_SERVER['DOCUMENT_ROOT'].'/_app';
+Application::$cache		= $_SERVER['DOCUMENT_ROOT'].'/_cache/packages.cache.php';
 
 Application::initialize();
 
@@ -34,6 +27,9 @@ class Application {
 
 	private static $include = array();
 
+	/**
+	 *
+	 */
 	static function initialize() {
 		if(file_exists(Application::$cache)) {
 			Application::$include = Application::read();
@@ -44,8 +40,8 @@ class Application {
 	}
 
 	/**
-	 * @param unknown_type $_path
-	 * @param unknown_type $_prefix
+	 * @param string $_path
+	 * @param string $_prefix
 	 * @return Ambigous <string, multitype:>
 	 */
 	private static function scan($_path, $_prefix = '') {
